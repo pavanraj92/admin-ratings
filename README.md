@@ -23,7 +23,7 @@ This package allows you to manage product ratings and reviews submitted by users
 |--------|----------------|---------------------|
 | GET    | `/ratings`     | List all ratings    |
 | GET    | `/ratings/{id}`| Get rating details  |
-| DELETE | `/ratings/{id}`| Delete a category   |
+| DELETE | `/ratings/{id}`| Delete a rating     |
 
 ## Requirements
 
