@@ -1,0 +1,22 @@
+{
+    "name": "admin/ratings",
+    "description": "Manage user ratings and reviews for products or services, allowing users to provide feedback and ratings.",
+    "type": "library",
+    "version": "1.0.0",  
+    "license": "MIT",
+    "autoload": {
+      "psr-4": {
+        "admin\\ratings\\": "src/"
+      }
+    },
+    "extra": { 
+      "laravel": {
+        "providers": [
+          "admin\\ratings\\RatingServiceProvider"
+        ]
+      }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+  }
+  
