@@ -68,20 +68,29 @@ class RatingManagerController extends Controller
             $rating->save();
 
             // create status html dynamically        
-            $dataStatus = $rating->status == '1' ? '0' : '1';
-            $label = $rating->status == '1' ? 'Active' : 'InActive';
-            $btnClass = $rating->status == '1' ? 'btn-success' : 'btn-warning';
-            $tooltip = $rating->status == '1' ? 'Click to change status to inactive' : 'Click to change status to active';
+            $label = ucfirst($rating->status);
+            $btnClass = '';
+            $tooltip = '';
+            
+            switch($rating->status) {
+                case 'approved':
+                    $btnClass = 'btn-success';
+                    $tooltip = 'Rating is approved';
+                    break;
+                case 'rejected':
+                    $btnClass = 'btn-danger';
+                    $tooltip = 'Rating is rejected';
+                    break;
+                case 'pending':
+                    $btnClass = 'btn-warning';
+                    $tooltip = 'Rating is pending';
+                    break;
+                default:
+                    $btnClass = 'btn-secondary';
+                    $tooltip = 'Rating status';
+            }
 
-            $strHtml = '<a href="javascript:void(0)"'
-                . ' data-toggle="tooltip"'
-                . ' data-placement="top"'
-                . ' title="' . $tooltip . '"'
-                . ' data-url="' . route('admin.ratings.updateStatus') . '"'
-                . ' data-method="POST"'
-                . ' data-status="' . $dataStatus . '"'
-                . ' data-id="' . $rating->id . '"'
-                . ' class="btn ' . $btnClass . ' btn-sm update-status">' . $label . '</a>';
+            $strHtml = '<button type="button" class="btn ' . $btnClass . ' btn-sm status-btn" data-id="' . $rating->id . '" data-status="' . $rating->status . '" data-url="' . route('admin.ratings.updateStatus') . '">' . $label . '</button>';
 
             return response()->json(['success' => true, 'message' => 'Status updated to ' . $label, 'strHtml' => $strHtml]);
         } catch (\Exception $e) {
