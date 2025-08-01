@@ -23,7 +23,7 @@
                                     <tr>
                                         <th scope="row">User</th>
                                         <td scope="col">
-                                            @if ($rating->user)
+                                            @if (class_exists(\admin\users\Models\User::class))
                                                 {{ $rating?->user?->name ?? 'N/A' }}
                                             @else
                                                 N/A
@@ -33,7 +33,7 @@
                                     <tr>
                                         <th scope="row">Product</th>
                                         <td scope="col">
-                                            @if ($rating->product)
+                                            @if (class_exists(\admin\products\Models\Product::class))
                                                 {{ $rating?->product?->name ?? 'N/A' }}
                                             @else
                                                 N/A

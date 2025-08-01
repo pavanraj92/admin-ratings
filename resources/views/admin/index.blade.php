@@ -76,14 +76,14 @@
                                             <tr>
                                                 <th scope="row">{{ $i }}</th>
                                                 <td>
-                                                    @if($rating->user)
-                                                        {{ $rating?->user?->full_name }}
+                                                    @if (class_exists(\admin\users\Models\User::class))
+                                                        {{ $rating?->user?->name ?? 'N/A' }}
                                                     @else
                                                         N/A
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if($rating->product)
+                                                    @if(class_exists(\admin\products\Models\Product::class))
                                                         {{ $rating?->product?->name }}
                                                     @else
                                                         N/A
@@ -91,21 +91,29 @@
                                                 </td>
                                                 <td>{!! $rating->getStarRatingHtml() !!}</td>
                                                 <td>
-                                                    <!-- create update status functionality-->
-                                                    @php
-                                                        $statusOptions = config('rating.constants.status');
-                                                    @endphp
-
-                                                    <select class="form-control status-dropdown"
-                                                            data-id="{{ $rating->id }}"
-                                                            data-url="{{ route('admin.ratings.updateStatus') }}">
-                                                        @foreach ($statusOptions as $value => $label)
-                                                            <option value="{{ $value }}" {{ $rating->status === $value ? 'selected' : '' }}>
-                                                                {{ $label }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-
+                                                    @if($rating->status === 'pending')
+                                                        <button type="button" 
+                                                                class="btn btn-warning btn-sm status-btn" 
+                                                                data-id="{{ $rating->id }}"
+                                                                data-status="pending"
+                                                                data-url="{{ route('admin.ratings.updateStatus') }}">
+                                                            Pending
+                                                        </button>
+                                                    @elseif($rating->status === 'approved')
+                                                        <button type="button" 
+                                                                class="btn btn-success btn-sm" 
+                                                                disabled>
+                                                            Approved
+                                                        </button>
+                                                    @elseif($rating->status === 'rejected')
+                                                        <button type="button" 
+                                                                class="btn btn-danger btn-sm status-btn" 
+                                                                data-id="{{ $rating->id }}"
+                                                                data-status="rejected"
+                                                                data-url="{{ route('admin.ratings.updateStatus') }}">
+                                                            Rejected
+                                                        </button>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     {{ $rating->created_at
@@ -168,35 +176,91 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).on('change', '.status-dropdown', function () {
+        $(document).ready(function() {
+            // Initialize select2
+            $('.select2').select2();
+        });
+
+        $(document).on('click', '.status-btn', function () {
             const $this = $(this);
-            const newStatus = $this.val();
-            const oldStatus = $this.data('original') || $this.find('option[selected]').val(); // Optional
             const ratingId = $this.data('id');
+            const currentStatus = $this.data('status');
             const updateUrl = $this.data('url');
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'Do you want to change the status?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, change it!',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post(updateUrl, {
-                        _token: '{{ csrf_token() }}',
-                        id: ratingId,
-                        status: newStatus
-                    }, function (response) {
-                        Swal.fire('Updated!', response.message, 'success');
-                    }).fail(function () {
-                        Swal.fire('Error!', 'Status could not be updated.', 'error');
-                    });
-                } else {
-                    // Optionally reset to previous value
-                    $this.val(oldStatus);
-                }
-            });
+            if (currentStatus === 'pending') {
+                // Show SWAL with Approve, Reject, Cancel buttons for pending status
+                Swal.fire({
+                    title: 'Rating Status',
+                    text: 'What would you like to do with this rating?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'Approve',
+                    denyButtonText: 'Reject',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#28a745',
+                    denyButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    customClass: {
+                        confirmButton: 'btn btn-outline-success',
+                        denyButton: 'btn btn-outline-danger',
+                        cancelButton: 'btn btn-outline-secondary',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Approve action
+                        updateRatingStatus(ratingId, 'approved', updateUrl, $this);
+                    } else if (result.isDenied) {
+                        // Reject action
+                        updateRatingStatus(ratingId, 'rejected', updateUrl, $this);
+                         
+                    }
+                    // Cancel action - do nothing, just close the popup
+                });
+            } else if (currentStatus === 'rejected') {
+                // Show SWAL with Approve and Cancel buttons for rejected status
+                Swal.fire({
+                    title: 'Rating Status',
+                    text: 'Would you like to approve this rejected rating?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Approve',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    customClass: {
+                        confirmButton: 'btn btn-outline-success',
+                        cancelButton: 'btn btn-outline-secondary',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Approve action
+                        updateRatingStatus(ratingId, 'approved', updateUrl, $this);
+                    }
+                    // Cancel action - do nothing, just close the popup
+                });
+            }
         });
+
+        function updateRatingStatus(ratingId, newStatus, updateUrl, $button) {
+            $.post(updateUrl, {
+                _token: '{{ csrf_token() }}',
+                id: ratingId,
+                status: newStatus
+            }, function (response) {
+                Swal.fire('Updated!', response.message, 'success');
+                
+                // Update the button based on new status
+                if (newStatus === 'approved') {
+                    $button.replaceWith('<button type="button" class="btn btn-success btn-sm" disabled>Approved</button>');
+                } else if (newStatus === 'rejected') {
+                    $button.replaceWith('<button type="button" class="btn btn-danger btn-sm status-btn" data-id="' + ratingId + '" data-status="rejected" data-url="' + updateUrl + '">Rejected</button>');
+                } else if (newStatus === 'pending') {
+                    $button.replaceWith('<button type="button" class="btn btn-warning btn-sm status-btn" data-id="' + ratingId + '" data-status="pending" data-url="' + updateUrl + '">Pending</button>');
+                }
+            }).fail(function () {
+                Swal.fire('Error!', 'Status could not be updated.', 'error');
+            });
+        }
     </script>
 @endpush

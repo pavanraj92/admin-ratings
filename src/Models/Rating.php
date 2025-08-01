@@ -78,17 +78,16 @@ class Rating extends Model
             : 10;
     }
 
-    // public function user()
-    // {
-    //     if (class_exists(\admin\users\Models\User::class)) {
-    //         return $this->belongsTo(User::class);
-    //     }
-    // }
-
-    // public function product()
-    // {
-    //     if (class_exists(\admin\products\Models\Product::class)) {
-    //         return $this->belongsTo(Product::class);
-    //     }
-    // }
+    public function user()
+    {
+        if (class_exists(\admin\users\Models\User::class)) {
+            return $this->belongsTo(\admin\users\Models\User::class, 'user_id');
+        }
+    }
+    public function product()
+    {
+        if (class_exists(\admin\products\Models\Product::class)) {
+            return $this->belongsTo(Product::class);
+        }
+    }
 }
