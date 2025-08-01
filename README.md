@@ -53,13 +53,13 @@ composer require admin/ratings:@dev
 
 1. Publish the configuration and migration files:
     ```bash    
-    php artisan categories:publish --force
+    php artisan ratings:publish --force
 
     composer dump-autoload
 
     php artisan migrate
     ```
-2. Access the Categories manager from your admin dashboard.
+2. Access the Rating manager from your admin dashboard.
 
 
 ## Customization
@@ -69,4 +69,4 @@ You can customize views, routes, and permissions by editing the package's config
 
 ## License
 
-This package is open-sourced software licensed under the Dotsquares.write code in the readme.md file regarding to the admin/categories manager
+This package is open-sourced software licensed under the Dotsquares.write code in the readme.md file regarding to the admin/ratings manager
