@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('course_id')->nullable();
             $table->tinyInteger('rating')->nullable()->comment('Rating out of 5');
             $table->text('review')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->comment('Status: pending, approved, rejected');

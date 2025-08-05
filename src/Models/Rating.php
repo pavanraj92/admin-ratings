@@ -21,6 +21,7 @@ class Rating extends Model
     protected $fillable = [
         'user_id',
         'product_id',
+        'course_id',
         'rating',
         'review',
         'status',
@@ -88,6 +89,13 @@ class Rating extends Model
     {
         if (class_exists(\admin\products\Models\Product::class)) {
             return $this->belongsTo(Product::class);
+        }
+    }
+
+        public function course()
+    {
+        if (class_exists(\admin\products\Models\Course::class)) {
+            return $this->belongsTo(Course::class);
         }
     }
 }
