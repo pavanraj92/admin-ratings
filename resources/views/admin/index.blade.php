@@ -59,11 +59,26 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">S. No.</th>
-                                        <th scope="col">@sortablelink('user_id', 'User', [], ['style' => 'color: #4F5467; text-decoration: none;'])</th>
-                                        <th scope="col">@sortablelink('product_id', 'Product', [], ['style' => 'color: #4F5467; text-decoration: none;'])</th>
-                                        <th scope="col">@sortablelink('rating', 'Rating', [], ['style' => 'color: #4F5467; text-decoration: none;'])</th>
-                                        <th scope="col">@sortablelink('status', 'Status', [], ['style' => 'color: #4F5467; text-decoration: none;'])</th>
-                                        <th scope="col">@sortablelink('created_at', 'Created At', [], ['style' => 'color: #4F5467; text-decoration: none;'])</th>
+                                        <th scope="col">@sortablelink('user_id', 'User', [], ['class' => 'text-dark'])</th>
+                                        @php
+                                            $productPackageInstalled = \DB::table('packages')
+                                                ->where(['package_name'=> 'admin/products', 'is_installed' => 1])
+                                                ->whereNull('deleted_at') // if using soft deletes
+                                                ->exists();
+                                             $coursePackageInstalled = \DB::table('packages')
+                                                ->where(['package_name'=> 'admin/courses', 'is_installed' => 1])
+                                                ->whereNull('deleted_at')
+                                                ->exists();
+                                        @endphp
+
+                                        @if($productPackageInstalled)
+                                            <th scope="col">@sortablelink('product_id', 'Product', [], ['class' => 'text-dark'])</th>
+                                        @elseif($coursePackageInstalled)
+                                            <th scope="col">@sortablelink('course_id', 'Course', [], ['class' => 'text-dark'])</th>
+                                        @endif
+                                        <th scope="col">@sortablelink('rating', 'Rating', [], ['class' => 'text-dark'])</th>
+                                        <th scope="col">@sortablelink('status', 'Status', [], ['class' => 'text-dark'])</th>
+                                        <th scope="col">@sortablelink('created_at', 'Created At', [], ['class' => 'text-dark'])</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -82,13 +97,15 @@
                                                         N/A
                                                     @endif
                                                 </td>
+                                                 @if(class_exists(\admin\products\Models\Product::class))
                                                 <td>
-                                                    @if(class_exists(\admin\products\Models\Product::class))
-                                                        {{ $rating?->product?->name }}
-                                                    @else
-                                                        N/A
-                                                    @endif
+                                                    {{ $rating?->product?->name }}
                                                 </td>
+                                                    @elseif(class_exists(\admin\users\Models\Course::class))
+                                                <td>
+                                                    {{ $rating?->course?->name }}
+                                                </td>
+                                                    @endif
                                                 <td>{!! $rating->getStarRatingHtml() !!}</td>
                                                 <td>
                                                     @if($rating->status === 'pending')
