@@ -24,7 +24,7 @@
                                         <th scope="row">User</th>
                                         <td scope="col">
                                             @if (class_exists(\admin\users\Models\User::class))
-                                                {{ $rating?->user?->name ?? 'N/A' }}
+                                                {{ $rating?->user?->full_name ?? 'N/A' }}
                                             @else
                                                 N/A
                                             @endif

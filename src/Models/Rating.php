@@ -92,7 +92,7 @@ class Rating extends Model
         }
     }
 
-        public function course()
+    public function course()
     {
         if (class_exists(\admin\products\Models\Course::class)) {
             return $this->belongsTo(Course::class);
