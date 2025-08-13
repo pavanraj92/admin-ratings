@@ -27,12 +27,35 @@ class Rating extends Model
     ];
 
     protected $sortable = [
-        'user_id',
-        'product_id',
+        'user',
+        'product.name',
+        'course.title',
         'rating',
         'status',
         'created_at',
     ];
+
+    public function userSortable($query, $direction)
+    {
+         return $query
+        ->leftJoin('users', 'ratings.user_id', '=', 'users.id')
+        ->orderByRaw("CONCAT(users.first_name, ' ', users.last_name) {$direction}")
+        ->select('ratings.*');
+    }
+
+    public function courseSortable($query, $direction)
+    {
+        return $query->join('courses', 'ratings.course_id', '=', 'courses.id')
+            ->orderBy('courses.title', $direction)
+            ->select('ratings.*');
+    }
+
+    public function productSortable($query, $direction)
+    {
+        return $query->join('products', 'ratings.product_id', '=', 'products.id')
+            ->orderBy('products.name', $direction)
+            ->select('ratings.*');
+    }
 
     public function scopeFilter($query, $filters)
     {
