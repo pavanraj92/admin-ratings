@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Kyslik\ColumnSortable\Sortable;
-use admin\users\Models\User;
-use admin\products\Models\Product;
+use Illuminate\Support\Facades\Schema;
 
 class Rating extends Model
 {
@@ -35,20 +34,31 @@ class Rating extends Model
         'created_at',
     ];
 
-    public function scopeFilter($query, $title)
+    public function scopeFilter($query, $filters)
     {
-        if (!empty($filters['user'])) {
-            $query->whereHas('user', function ($q) use ($filters) {
-                $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $filters['user'] . '%']);
-            });
-        }
-    
-        if (!empty($filters['product'])) {
-            $query->whereHas('product', function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['product'] . '%');
-            });
-        }
+        if (!empty($filters['keyword'])) {
+            $keyword = $filters['keyword'];
 
+            if (Schema::hasTable('users') && method_exists($this, 'user')) {
+                $query->whereHas('user', function ($q) use ($keyword) {
+                    $q->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$keyword}%"]);
+                });
+            }
+
+            if (Schema::hasTable('products') && method_exists($this, 'product')) {
+                $query->orWhereHas('product', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            }
+
+            if (Schema::hasTable('courses') && method_exists($this, 'course')) {
+                $query->orWhereHas('course', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            }
+
+        }
+        
         return $query;
     }
     /**
@@ -88,14 +98,14 @@ class Rating extends Model
     public function product()
     {
         if (class_exists(\admin\products\Models\Product::class)) {
-            return $this->belongsTo(Product::class);
+            return $this->belongsTo(\admin\products\Models\Product::class);
         }
     }
 
     public function course()
     {
-        if (class_exists(\admin\products\Models\Course::class)) {
-            return $this->belongsTo(Course::class);
+        if (class_exists(\admin\courses\Models\Course::class)) {
+            return $this->belongsTo(\admin\courses\Models\Course::class);
         }
     }
 }
