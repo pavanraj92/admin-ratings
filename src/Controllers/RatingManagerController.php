@@ -25,7 +25,7 @@ class RatingManagerController extends Controller
     {
         try {
             $ratings = Rating::query()
-                ->filter($request->query('keyword'))
+                ->filter($request->only(['keyword'])) 
                 ->filterByStatus($request->query('status'))
                 ->sortable()
                 ->latest()

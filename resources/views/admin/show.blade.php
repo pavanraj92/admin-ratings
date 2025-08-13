@@ -31,14 +31,17 @@
                                         </td>
                                     </tr>                      
                                     <tr>
+                                        @if (class_exists(\admin\products\Models\Product::class))
                                         <th scope="row">Product</th>
                                         <td scope="col">
-                                            @if (class_exists(\admin\products\Models\Product::class))
-                                                {{ $rating?->product?->name ?? 'N/A' }}
-                                            @else
-                                                N/A
-                                            @endif
+                                            {{ $rating?->product?->name ?? 'N/A' }}
                                         </td>
+                                        @elseif(class_exists(\admin\courses\Models\Course::class))
+                                        <th scope="row">Course</th>
+                                        <td scope="col">
+                                            {{ $rating?->course?->name ?? 'N/A' }}
+                                        </td>
+                                        @endif
                                     </tr>
                                     <tr>
                                         <th scope="row">Status</th>

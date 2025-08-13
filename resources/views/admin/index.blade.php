@@ -22,7 +22,7 @@
                                 <div class="form-group">
                                     <label for="title">Keyword</label>
                                     <input type="text" name="keyword" id="keyword" class="form-control"
-                                        value="{{ app('request')->query('keyword') }}" placeholder="Enter user or product">                                   
+                                        value="{{ app('request')->query('keyword') }}" placeholder="Enter keyword">                                   
                                 </div>
                             </div>
                             <div class="col-md-3">
