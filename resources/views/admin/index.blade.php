@@ -103,7 +103,7 @@
                                                 </td>
                                                     @elseif(class_exists(\admin\users\Models\Course::class))
                                                 <td>
-                                                    {{ $rating?->course?->name }}
+                                                    {{ $rating?->course?->title }}
                                                 </td>
                                                     @endif
                                                 <td>{!! $rating->getStarRatingHtml() !!}</td>

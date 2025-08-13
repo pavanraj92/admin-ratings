@@ -39,7 +39,7 @@
                                         @elseif(class_exists(\admin\courses\Models\Course::class))
                                         <th scope="row">Course</th>
                                         <td scope="col">
-                                            {{ $rating?->course?->name ?? 'N/A' }}
+                                            {{ $rating?->course?->title ?? 'N/A' }}
                                         </td>
                                         @endif
                                     </tr>

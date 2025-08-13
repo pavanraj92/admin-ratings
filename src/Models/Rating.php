@@ -53,7 +53,7 @@ class Rating extends Model
 
             if (Schema::hasTable('courses') && method_exists($this, 'course')) {
                 $query->orWhereHas('course', function ($q) use ($keyword) {
-                    $q->where('name', 'like', "%{$keyword}%");
+                    $q->where('title', 'like', "%{$keyword}%");
                 });
             }
 
