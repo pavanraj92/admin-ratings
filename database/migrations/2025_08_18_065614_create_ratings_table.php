@@ -14,8 +14,24 @@ return new class extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained('products')->cascadeOnDelete();
-            $table->foreignId('course_id')->nullable()->constrained('courses')->cascadeOnDelete();
+            // Product (optional)
+            if (Schema::hasTable('products')) {
+                $table->foreignId('product_id')->nullable()
+                      ->constrained('products')
+                      ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id')->nullable();
+            }
+
+            // Course (optional)
+            if (Schema::hasTable('courses')) {
+                $table->foreignId('course_id')->nullable()
+                      ->constrained('courses')
+                      ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('course_id')->nullable();
+            }
+
             $table->tinyInteger('rating')->nullable()->comment('Rating out of 5');
             $table->text('review')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->comment('Status: pending, approved, rejected');
