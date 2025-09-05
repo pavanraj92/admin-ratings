@@ -19,7 +19,13 @@ class RatingServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views'      // Package views as fallback
         ], 'rating');
 
-        $this->mergeConfigFrom(__DIR__.'/../config/rating.php', 'rating.constants');
+        // Load published module config first (if it exists), then fallback to package config
+        if (file_exists(base_path('Modules/Ratings/config/rating.php'))) {
+            $this->mergeConfigFrom(base_path('Modules/Ratings/config/rating.php'), 'rating.config');
+        } else {
+            // Fallback to package config if published config doesn't exist
+            $this->mergeConfigFrom(__DIR__ . '/../config/rating.php', 'rating.config');
+        }
         
         // Also register module views with a specific namespace for explicit usage
         if (is_dir(base_path('Modules/Ratings/resources/views'))) {
@@ -29,11 +35,6 @@ class RatingServiceProvider extends ServiceProvider
         // Also load migrations from published module if they exist
         if (is_dir(base_path('Modules/Ratings/database/migrations'))) {
             $this->loadMigrationsFrom(base_path('Modules/Ratings/database/migrations'));
-        }
-        $this->mergeConfigFrom(__DIR__ . '/../config/rating.php', 'rating.config');
-        // Also merge config from published module if it exists
-        if (file_exists(base_path('Modules/Ratings/config/ratings.php'))) {
-            $this->mergeConfigFrom(base_path('Modules/Ratings/config/ratings.php'), 'rating.config');
         }
         
         // Only publish automatically during package installation, not on every request
