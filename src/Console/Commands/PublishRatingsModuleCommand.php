@@ -90,6 +90,13 @@ class PublishRatingsModuleCommand extends Command
         // Handle specific file types
         if (str_contains($sourceFile, 'Controllers')) {
             $content = str_replace('use admin\\ratings\\Models\\Rating;', 'use Modules\\Ratings\\app\\Models\\Rating;', $content);
+        } elseif (str_contains($sourceFile, 'Models')) {
+            // Transform admin_auth namespaces in models
+            $content = str_replace(
+                'use admin\users\Models\User;',
+                'use Modules\\Users\\app\\Models\\User;',
+                $content
+            );
         }
 
         return $content;

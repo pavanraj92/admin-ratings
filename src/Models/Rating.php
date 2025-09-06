@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Kyslik\ColumnSortable\Sortable;
+use admin\users\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 class Rating extends Model
@@ -114,9 +115,7 @@ class Rating extends Model
 
     public function user()
     {
-        if (class_exists(\admin\users\Models\User::class)) {
-            return $this->belongsTo(\admin\users\Models\User::class, 'user_id');
-        }
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function product()
     {

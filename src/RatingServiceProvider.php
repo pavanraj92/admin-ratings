@@ -177,6 +177,11 @@ class RatingServiceProvider extends ServiceProvider
     protected function transformModelNamespaces($content)
     {
         // Any model-specific transformations
+        $content = str_replace(
+            'use admin\users\Models\User;',
+            'use Modules\\Users\\app\\Models\\User;',
+            $content
+        );
         return $content;
     }
 
