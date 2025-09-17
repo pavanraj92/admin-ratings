@@ -182,6 +182,16 @@ class RatingServiceProvider extends ServiceProvider
             'use Modules\\Users\\app\\Models\\User;',
             $content
         );
+        $content = str_replace(
+            'use admin\products\Models\Product;',
+            'use Modules\\Products\\app\\Models\\Product;',
+            $content
+        );
+        $content = str_replace(
+            'use admin\courses\Models\Course;',
+            'use Modules\\Courses\\app\\Models\\Course;',
+            $content
+        );
         return $content;
     }
 

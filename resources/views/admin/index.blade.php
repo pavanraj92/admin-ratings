@@ -91,17 +91,17 @@
                                             <tr>
                                                 <th scope="row">{{ $i }}</th>
                                                 <td>
-                                                    @if (class_exists(\admin\users\Models\User::class))
+                                                    @if (admin\ratings\Models\Rating::isModuleInstalled('users'))
                                                         {{ $rating?->user?->full_name ?? 'N/A' }}
                                                     @else
                                                         N/A
                                                     @endif
                                                 </td>
-                                                 @if(class_exists(\admin\products\Models\Product::class))
+                                                 @if(admin\ratings\Models\Rating::isModuleInstalled('products'))
                                                 <td>
                                                     {{ $rating?->product?->name }}
                                                 </td>
-                                                    @elseif(class_exists(\admin\users\Models\Course::class))
+                                                    @elseif(admin\ratings\Models\Rating::isModuleInstalled('courses'))
                                                 <td>
                                                     {{ $rating?->course?->title }}
                                                 </td>

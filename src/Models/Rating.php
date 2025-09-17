@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Config;
 use Kyslik\ColumnSortable\Sortable;
 use admin\users\Models\User;
 use Illuminate\Support\Facades\Schema;
+use admin\products\Models\Product;
+use admin\courses\Models\Course;
+use Illuminate\Support\Facades\DB;
 
 class Rating extends Model
 {
@@ -119,15 +122,23 @@ class Rating extends Model
     }
     public function product()
     {
-        if (class_exists(\admin\products\Models\Product::class)) {
-            return $this->belongsTo(\admin\products\Models\Product::class);
+        if (self::isModuleInstalled('products')) {
+            return $this->belongsTo(Product::class);
         }
     }
 
     public function course()
     {
-        if (class_exists(\admin\courses\Models\Course::class)) {
-            return $this->belongsTo(\admin\courses\Models\Course::class);
+        if (self::isModuleInstalled('courses')) {
+            return $this->belongsTo(Course::class);
         }
+    }
+
+    public static function isModuleInstalled($moduleName)
+    {
+        return DB::table('packages')
+            ->where('name', $moduleName)
+            ->where('is_installed', 1)
+            ->exists();
     }
 }
