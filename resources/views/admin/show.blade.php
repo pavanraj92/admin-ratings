@@ -41,7 +41,7 @@
                                                 <div class="form-group">
                                                     <label class="font-weight-bold">User:</label>
                                                     <p>
-                                                        @if (class_exists(\admin\users\Models\User::class))
+                                                        @if (admin\ratings\Models\Rating::isModuleInstalled('users'))
                                                             {{ $rating?->user?->full_name ?? 'N/A' }}
                                                         @else
                                                             N/A
@@ -52,18 +52,18 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="font-weight-bold">
-                                                        @if (class_exists(\admin\products\Models\Product::class))
+                                                        @if (admin\ratings\Models\Rating::isModuleInstalled('products'))
                                                             Product:
-                                                        @elseif(class_exists(\admin\courses\Models\Course::class))
+                                                        @elseif(admin\ratings\Models\Rating::isModuleInstalled('courses'))
                                                             Course:
                                                         @else
                                                             Item:
                                                         @endif
                                                     </label>
                                                     <p>
-                                                        @if (class_exists(\admin\products\Models\Product::class))
+                                                        @if (admin\ratings\Models\Rating::isModuleInstalled('products'))
                                                             {{ $rating?->product?->name ?? 'N/A' }}
-                                                        @elseif(class_exists(\admin\courses\Models\Course::class))
+                                                        @elseif(admin\ratings\Models\Rating::isModuleInstalled('courses'))
                                                             {{ $rating?->course?->title ?? 'N/A' }}
                                                         @else
                                                             N/A
@@ -116,13 +116,6 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="d-flex flex-column">
-                                            @admincan('ratings_manager_edit')
-                                                <a href="{{ route('admin.ratings.edit', $rating) }}"
-                                                    class="btn btn-warning mb-2">
-                                                    <i class="mdi mdi-pencil"></i> Edit Rating
-                                                </a>
-                                            @endadmincan
-
                                             @admincan('ratings_manager_delete')
                                                 <button type="button" class="btn btn-danger delete-btn delete-record"
                                                     title="Delete this record"

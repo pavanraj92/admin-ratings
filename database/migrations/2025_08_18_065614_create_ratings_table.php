@@ -19,8 +19,6 @@ return new class extends Migration
                 $table->foreignId('product_id')->nullable()
                       ->constrained('products')
                       ->cascadeOnDelete();
-            } else {
-                $table->unsignedBigInteger('product_id')->nullable();
             }
 
             // Course (optional)
@@ -28,8 +26,6 @@ return new class extends Migration
                 $table->foreignId('course_id')->nullable()
                       ->constrained('courses')
                       ->cascadeOnDelete();
-            } else {
-                $table->unsignedBigInteger('course_id')->nullable();
             }
 
             $table->tinyInteger('rating')->nullable()->comment('Rating out of 5');
